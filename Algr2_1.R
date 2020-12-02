@@ -37,7 +37,7 @@ for (i in 1:length(A)){
   test <- A[[i]]%*%X[[mod_X]]%*%B[[i]]
   save_sum[[group_X]] <- save_sum[[group_X]] - test
 }
-R1 <- diag(unlist(save_sum))
+R1 <- unlist(save_sum)
 prepare <- c(X,X,X)
 p <- X
 for (i in 1:length(A)){
@@ -61,7 +61,7 @@ for (iter in 1:1000){
     test <- A[[i]]%*%new_X[[mod_X]]%*%B[[i]]
     new_save_sum[[group_X]] <- new_save_sum[[group_X]] - test
   }
-  new_R <- diag(unlist(new_save_sum))
+  new_R <- unlist(new_save_sum)
   for (i in 1:length(p)){
     p[[i]] <- sum(new_R^2)/sum(R1^2)*p[[i]]
   }
@@ -73,13 +73,14 @@ for (iter in 1:1000){
     prepare[[i]] <-crossprod(A[[i]],new_save_sum[[group_X]]%*%t(B[[i]]))
     p[[mod_X]] <- p[[mod_X]] + prepare[[i]]
   }
-  if (sum(new_R^2)/length(unlist(new_save_sum))<1e-20){
+  if (sum(new_R^2)/length(new_R)<1e-20){
     break
   }
   X <- new_X
   save_sum <- new_save_sum
   R1 <- new_R 
 }
+
 ## Return Result
 X
 iter
