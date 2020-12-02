@@ -48,30 +48,38 @@ for (i in 1:length(A)){
 }
 
 ## Step 5
-for (i in 1:length(X)){
-  new_X[[i]] <- X[[i]] + sum(R1^2)/sum(unlist(p)^2)*p[[i]]
-}
-new_save_sum <- C
-for (i in 1:length(A)){
-  mod_X <- (i-1)%%length(X)+1
-  group_X <- (i-1)%/%length(X)+1
-  test <- A[[i]]%*%new_X[[mod_X]]%*%B[[i]]
-  new_save_sum[[group_X]] <- new_save_sum[[group_X]] - test
-}
-new_R <- diag(unlist(new_save_sum))
-for (i in 1:length(p)){
-  p[[i]] <- sum(new_R^2)/sum(R1^2)*p[[i]]
-}
-prepare <- c(zeros_X,zeros_X,zeros_X)
 
-for (i in 1:length(A)){
-  group_X <- (i-1)%/%length(X)+1
-  mod_X <- (i-1)%%length(X)+1
-  prepare[[i]] <-crossprod(A[[i]],new_save_sum[[group_X]]%*%t(B[[i]]))
-  p[[mod_X]] <- p[[mod_X]] + prepare[[i]]
+new_X <- zeros_X
+for (iter in 1:1000){
+  for (i in 1:length(X)){
+    new_X[[i]] <- X[[i]] + sum(R1^2)/sum(unlist(p)^2)*p[[i]]
+  }
+  new_save_sum <- C
+  for (i in 1:length(A)){
+    mod_X <- (i-1)%%length(X)+1
+    group_X <- (i-1)%/%length(X)+1
+    test <- A[[i]]%*%new_X[[mod_X]]%*%B[[i]]
+    new_save_sum[[group_X]] <- new_save_sum[[group_X]] - test
+  }
+  new_R <- diag(unlist(new_save_sum))
+  for (i in 1:length(p)){
+    p[[i]] <- sum(new_R^2)/sum(R1^2)*p[[i]]
+  }
+  prepare <- c(zeros_X,zeros_X,zeros_X)
+  
+  for (i in 1:length(A)){
+    group_X <- (i-1)%/%length(X)+1
+    mod_X <- (i-1)%%length(X)+1
+    prepare[[i]] <-crossprod(A[[i]],new_save_sum[[group_X]]%*%t(B[[i]]))
+    p[[mod_X]] <- p[[mod_X]] + prepare[[i]]
+  }
+  if (sum(new_R^2)/length(unlist(new_save_sum))<1e-20){
+    break
+  }
+  X <- new_X
+  save_sum <- new_save_sum
+  R1 <- new_R 
 }
-X <- new_X
-save_sum <- new_save_sum
-R1 <- new_R 
-
+X
+iter
 A11%*%X[[1]]%*%B11 + A12%*%X[[2]]%*%B12 + A13%*%X[[3]]%*%B13
