@@ -23,10 +23,12 @@ C3 <- matrix(c(-1:4),2,3)
 C <- list(C1,C2,C3)
 A <- list(A11,A12,A13,A21,A22,A23,A31,A32,A33)
 B <- list(B11,B12,B13,B21,B22,B23,B31,B32,B33)
+
 ## Step 1
 X1 <- matrix(0,dim(A11)[2],dim(B11)[1])
 X2 <- matrix(0,dim(A12)[2],dim(B12)[1])
 X3 <- matrix(0,dim(A13)[2],dim(B13)[1])
+zeros_X <- list(X1,X2,X3)
 X <- list(X1,X2,X3)
 save_sum <- C
 for (i in 1:length(A)){
@@ -46,3 +48,30 @@ for (i in 1:length(A)){
 }
 
 ## Step 5
+for (i in 1:length(X)){
+  new_X[[i]] <- X[[i]] + sum(R1^2)/sum(unlist(p)^2)*p[[i]]
+}
+new_save_sum <- C
+for (i in 1:length(A)){
+  mod_X <- (i-1)%%length(X)+1
+  group_X <- (i-1)%/%length(X)+1
+  test <- A[[i]]%*%new_X[[mod_X]]%*%B[[i]]
+  new_save_sum[[group_X]] <- new_save_sum[[group_X]] - test
+}
+new_R <- diag(unlist(new_save_sum))
+for (i in 1:length(p)){
+  p[[i]] <- sum(new_R^2)/sum(R1^2)*p[[i]]
+}
+prepare <- c(zeros_X,zeros_X,zeros_X)
+
+for (i in 1:length(A)){
+  group_X <- (i-1)%/%length(X)+1
+  mod_X <- (i-1)%%length(X)+1
+  prepare[[i]] <-crossprod(A[[i]],new_save_sum[[group_X]]%*%t(B[[i]]))
+  p[[mod_X]] <- p[[mod_X]] + prepare[[i]]
+}
+X <- new_X
+save_sum <- new_save_sum
+R1 <- new_R 
+
+A11%*%X[[1]]%*%B11 + A12%*%X[[2]]%*%B12 + A13%*%X[[3]]%*%B13
