@@ -42,7 +42,7 @@ while (sum(Rk-zero)<tol) {
 
 
 
-
+cov
 
 
 #test#
