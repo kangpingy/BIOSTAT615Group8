@@ -38,7 +38,7 @@ for (i in 1:length(A)){
   save_sum[[group_X]] <- save_sum[[group_X]] - test
 }
 R1 <- unlist(save_sum)
-prepare <- c(X,X,X)
+prepare <- rep(X,length(X))
 p <- X
 for (i in 1:length(A)){
   group_X <- (i-1)%/%length(X)+1
@@ -65,7 +65,7 @@ for (iter in 1:1000){
   for (i in 1:length(p)){
     p[[i]] <- sum(new_R^2)/sum(R1^2)*p[[i]]
   }
-  prepare <- c(zeros_X,zeros_X,zeros_X)
+  prepare <- rep(zeros_X,length(X))
   
   for (i in 1:length(A)){
     group_X <- (i-1)%/%length(X)+1
