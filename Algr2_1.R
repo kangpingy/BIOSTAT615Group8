@@ -1,4 +1,4 @@
-kronecker(t(B),A)
+
 A11 <- matrix(runif(12),3,4)
 A12 <- matrix(runif(6),3,2)
 A13 <- matrix(runif(15),3,5)
@@ -80,6 +80,13 @@ for (iter in 1:1000){
   save_sum <- new_save_sum
   R1 <- new_R 
 }
+## Return Result
 X
 iter
+## Verification
 A11%*%X[[1]]%*%B11 + A12%*%X[[2]]%*%B12 + A13%*%X[[3]]%*%B13
+C1
+A21%*%X[[1]]%*%B21 + A22%*%X[[2]]%*%B22 + A23%*%X[[3]]%*%B23
+C2
+A31%*%X[[1]]%*%B31 + A32%*%X[[2]]%*%B32 + A33%*%X[[3]]%*%B33
+C3
